@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>بنك الدم المصري | شريان الحياة</title>
+    
+    <!-- مكتبات التصميم والخطوط -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght
+    :400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+    <!-- إعدادات Tailwind المخصصة -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            500: '#ef4444', 
+                            600: '#dc2626',
+                            700: '#b91c1c', 
+                            800: '#991b1b',
+                            900: '#7f1d1d',
+                        },
+                        dark: '#0f172a',
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        tajawal: ['Tajawal', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px rgba(239, 68, 68, 0.5)',
+                        'card': '0 10px 30px -5px rgba(0, 0, 0, 0.1)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f8fafc;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* شريط التمرير */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #ef4444; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #b91c1c; }
+
+        /* تأثير الزجاج */
+        .glass {
+            background: rgba(255, 255, 255, 0.90);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .glass-dark {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* حركات مخصصة */
+        .animate-float { animation: float 4s ease-in-out infinite; }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* حقول الإدخال */
+        .form-input {
+            transition: all 0.3s ease;
+            border: 2px solid #e2e8f0;
+        }
+        .form-input:focus {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+
+    <!-- القائمة العلوية -->
+    <nav class="fixed w-full top-0 z-50 glass transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-4 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- الشعار -->
+                <div class="flex items-center gap-3 cursor-pointer group" onclick="safeNavigate('home')">
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-red-500 rounded-full blur opacity-40 group-hover:opacity-70 transition"></div>
+                        <div class="relative bg-gradient-to-br from-red-500 to-red-700 text-white p-2.5 rounded-xl shadow-lg transform group-hover:scale-110 transition duration-300">
+                            <i class="fa-solid fa-heart-pulse text-2xl"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight leading-none">بنك الدم</h1>
+                        <span class="text-xs font-bold text-red-500 tracking-widest uppercase">Blood Bank</span>
+                    </div>
+                </div>
+
+                <!-- روابط الكمبيوتر -->
+                <div class="hidden md:flex items-center gap-1">
+                    <button onclick="safeNavigate('home')" class="px-5 py-2 rounded-full font-bold text-slate-600 hover:text-red-600 hover:bg-red-50 transition">الرئيسية</button>
+                    <button onclick="safeNavigate('search')" class="px-5 py-2 rounded-full font-bold text-slate-600 hover:text-red-600 hover:bg-red-50 transition">البحث عن متبرع</button>
+                    <button onclick="safeNavigate('volunteer')" class="px-5 py-2 rounded-full font-bold text-slate-600 hover:text-red-600 hover:bg-red-50 transition">تطوع معنا</button>
+                    <button onclick="safeNavigate('about')" class="px-5 py-2 rounded-full font-bold text-slate-600 hover:text-red-600 hover:bg-red-50 transition">من نحن</button>
+                </div>
+
+                <!-- أزرار الكمبيوتر -->
+                <div class="hidden md:flex items-center gap-4">
+                    <button onclick="safeNavigate('login')" class="font-bold text-slate-600 hover:text-red-600 transition">دخول</button>
+                    <button onclick="safeNavigate('register')" class="bg-slate-900 hover:bg-red-600 text-white px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-glow transition transform hover:-translate-y-0.5 flex items-center gap-2">
+                        <i class="fa-solid fa-user-plus"></i> سجل كمتبرع
+                    </button>
+                </div>
+
+                <!-- زر الموبايل -->
+                <button class="md:hidden text-2xl text-slate-700 p-2 focus:outline-none" onclick="toggleMobileMenu()">
+                    <i class="fa-solid fa-bars-staggered"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- قائمة الموبايل -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white/95 backdrop-blur-xl border-t border-slate-100 absolute w-full left-0 shadow-xl transition-all duration-300">
+            <div class="p-4 flex flex-col gap-2">
+                <a onclick="safeNavigate('home'); toggleMobileMenu()" class="p-4 rounded-xl bg-slate-50 font-bold text-slate-700 hover:bg-red-50 hover:text-red-600 transition flex items-center gap-3"><i class="fa-solid fa-home"></i> الرئيسية</a>
+                <a onclick="safeNavigate('search'); toggleMobileMenu()" class="p-4 rounded-xl bg-slate-50 font-bold text-slate-700 hover:bg-red-50 hover:text-red-600 transition flex items-center gap-3"><i class="fa-solid fa-search"></i> ابحث عن متبرع</a>
+                <a onclick="safeNavigate('register'); toggleMobileMenu()" class="p-4 rounded-xl bg-red-600 text-white font-bold shadow-lg text-center mt-2">سجل كمتبرع الآن</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- المحتوى الرئيسي -->
+    <main id="app-root" class="flex-grow pt-20 overflow-hidden min-h-screen">
+        <!-- شاشة تحميل -->
+        <div class="min-h-[80vh] flex items-center justify-center bg-slate-50">
+            <div class="flex flex-col items-center animate-pulse">
+                <i class="fa-solid fa-heart text-6xl text-red-500 mb-4"></i>
+                <p class="font-bold text-slate-400">جاري تحميل النظام...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- التذييل (Footer) -->
+    <footer class="bg-slate-900 text-white pt-16 pb-8 mt-auto relative overflow-hidden">
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="grid md:grid-cols-3 gap-12 mb-12">
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="bg-red-600 p-2 rounded-lg"><i class="fa-solid fa-heart-pulse text-2xl"></i></div>
+                        <h2 class="text-2xl font-bold">بنك الدم المصري</h2>
+                    </div>
+                    <p class="text-slate-400 leading-relaxed">
+                        منصة رقمية تهدف لسد الفجوة بين المتبرعين والمرضى باستخدام التقنية لإنقاذ الأرواح.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-6 text-red-500">روابط سريعة</h3>
+                    <ul class="space-y-3 text-slate-300">
+                        <li><a onclick="safeNavigate('search')" class="hover:text-white cursor-pointer">البحث عن فصيلة</a></li>
+                        <li><a onclick="safeNavigate('register')" class="hover:text-white cursor-pointer">تسجيل متبرع</a></li>
+                        <li><a onclick="safeNavigate('about')" class="hover:text-white cursor-pointer">شروط التبرع</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-6 text-red-500">تواصل معنا</h3>
+                    <ul class="space-y-3 text-slate-300">
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-phone text-red-500"></i> 19999</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-location-dot text-red-500"></i> القاهرة، مصر</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-slate-800 pt-8 text-center text-slate-500 text-sm">
+                جميع الحقوق محفوظة &copy; 2025 لموقع بنك الدم.
+            </div>
+        </div>
+    </footer>
+
+    <!-- نظام التنبيهات -->
+    <div id="toast-container" class="fixed bottom-8 left-8 z-[100] flex flex-col gap-3 pointer-events-none"></div>
+
+    <!-- كود الجافاسكريبت (المنطق الكامل) -->
+    <script>
+        try {
+            // --- 1. قاعدة البيانات والمتغيرات ---
+            const db = {
+                // بيانات تجريبية للمتبرعين (يمكن تصفيرها لاحقاً إذا طلب المستخدم تصفير قاعدة البيانات بالكامل)
+                donors: [
+                    { id: 1, name: "أحمد محمد علي", blood: "A+", city: "القاهرة", phone: "01001234567", lastDonation: "2023-11-01", verified: true },
+                    { id: 2, name: "سارة إبراهيم", blood: "O-", city: "الجيزة", phone: "01119876543", lastDonation: "2024-01-15", verified: true },
+                    { id: 3, name: "محمود حسن", blood: "B+", city: "الإسكندرية", phone: "01223334444", lastDonation: "2023-09-20", verified: false },
+                    { id: 4, name: "كريم عبد الله", blood: "AB+", city: "المنصورة", phone: "01555556666", lastDonation: "2023-12-10", verified: true },
+                    { id: 5, name: "منى زكي", blood: "A-", city: "القاهرة", phone: "01009998887", lastDonation: "2024-02-01", verified: false },
+                    { id: 6, name: "يوسف عمر", blood: "O+", city: "أسيوط", phone: "01221112223", lastDonation: "2023-10-30", verified: true }
+                ]
+            };
+
+            const cities = ["القاهرة", "الجيزة", "الإسكندرية", "المنصورة", "أسيوط", "طنطا", "بورسعيد", "الإسماعيلية", "سوهاج", "أسوان"];
+            const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+
+            // --- 2. أدوات مساعدة (Utilities) ---
+            window.toggleMobileMenu = () => {
+                const menu = document.getElementById('mobile-menu');
+                menu.classList.toggle('hidden');
+            };
+
+            window.showToast = (msg, type = 'success') => {
+                const container = document.getElementById('toast-container');
+                const div = document.createElement('div');
+                const bg = type === 'success' ? 'bg-emerald-600' : 'bg-red-600';
+                const icon = type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation';
+
+                div.className = `${bg} text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 animate__animated animate__fadeInUp min-w-[300px] pointer-events-auto border border-white/10 backdrop-blur-md`;
+                div.innerHTML = `
+                    <div class="bg-white/20 p-2 rounded-full"><i class="fa-solid ${icon} text-xl"></i></div>
+                    <div>
+                        <h4 class="font-bold text-sm opacity-90">${type === 'success' ? 'تمت العملية' : 'تنبيه'}</h4>
+                        <p class="font-bold text-base">${msg}</p>
+                    </div>
+                `;
+                container.appendChild(div);
+                setTimeout(() => {
+                    div.classList.replace('animate__fadeInUp', 'animate__fadeOutDown');
+                    setTimeout(() => div.remove(), 500);
+                }, 4000);
+            };
+
+            // --- 3. الصفحات (Views) ---
+            const views = {
+                home: () => `
+                    <header class="relative min-h-[85vh] flex items-center overflow-hidden bg-slate-900">
+                        <div class="absolute inset-0 z-0">
+                            <img src="https://images.unsplash.com/photo-1615461066841-6116e61058f4?q=80&w=1920" class="w-full h-full object-cover opacity-40 animate-pulse-slow" alt="Blood Donation">
+                            <div class="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/90 to-transparent"></div>
+                        </div>
+                        <div class="container mx-auto px-6 z-10 pt-10">
+                            <div class="max-w-3xl animate__animated animate__fadeInRight">
+                                <div class="inline-flex items-center gap-2 bg-red-500/20 border border-red-500/30 rounded-full px-4 py-1 text-red-400 font-bold text-sm mb-6 backdrop-blur-md">
+                                    <span class="w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
+                                    بوابة التبرع الرسمية
+                                </div>
+                                <h1 class="text-5xl md:text-7xl font-black text-white leading-tight mb-6">
+                                    قطرة دم واحدة <br>
+                                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-600">تمنح حياة جديدة</span>
+                                </h1>
+                                <p class="text-xl text-slate-300 mb-10 leading-relaxed max-w-2xl">
+                                    انضم لأكثر من 5000 متبرع وساهم في إنقاذ الأرواح. منصتنا تربطك بمن يحتاجك في ثوانٍ.
+                                </p>
+                                <div class="flex flex-col sm:flex-row gap-5">
+                                    <button onclick="safeNavigate('register')" class="bg-red-600 hover:bg-red-700 text-white px-10 py-4 rounded-full font-bold text-lg shadow-glow transition transform hover:-translate-y-1 flex justify-center items-center gap-3">
+                                        <span>تبرع الآن</span> <i class="fa-solid fa-arrow-left"></i>
+                                    </button>
+                                    <button onclick="safeNavigate('search')" class="bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/10 px-10 py-4 rounded-full font-bold text-lg transition flex justify-center items-center gap-3">
+                                        <i class="fa-solid fa-search"></i> <span>ابحث عن فصيلة</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Floating Stats -->
+                        <div class="hidden lg:block absolute left-20 bottom-20 animate-float">
+                            <div class="glass-dark p-6 rounded-2xl shadow-2xl max-w-xs">
+                                <div class="flex items-center gap-4 mb-4">
+                                    <!-- تم تعديل الرقم هنا إلى 0 -->
+                                    <div class="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center text-green-400 text-xl"><i class="fa-solid fa-check"></i></div>
+                                    <div><p class="text-slate-400 text-sm">تم إنقاذ</p><p class="text-white font-bold text-2xl">0 حالة</p></div>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    <section class="py-20 bg-white">
+                        <div class="container mx-auto px-6">
+                            <div class="text-center mb-16">
+                                <h2 class="text-4xl font-bold text-slate-900 mb-4">لماذا تختار بنك الدم؟</h2>
+                                <div class="w-20 h-1.5 bg-red-500 mx-auto rounded-full"></div>
+                            </div>
+                            <div class="grid md:grid-cols-3 gap-10">
+                                <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100 group hover:-translate-y-2 transition duration-300">
+                                    <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center text-red-600 text-3xl mb-6 group-hover:bg-red-600 group-hover:text-white transition"><i class="fa-solid fa-bolt"></i></div>
+                                    <h3 class="text-2xl font-bold text-slate-800 mb-3">سرعة الوصول</h3>
+                                    <p class="text-slate-600">نظام ذكي يربطك بأقرب متبرع في منطقتك في ثوانٍ.</p>
+                                </div>
+                                <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100 group hover:-translate-y-2 transition duration-300">
+                                    <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 text-3xl mb-6 group-hover:bg-blue-600 group-hover:text-white transition"><i class="fa-solid fa-shield-halved"></i></div>
+                                    <h3 class="text-2xl font-bold text-slate-800 mb-3">بيانات موثقة</h3>
+                                    <p class="text-slate-600">نتحقق من بيانات المتبرعين لضمان الجدية والأمان.</p>
+                                </div>
+                                <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100 group hover:-translate-y-2 transition duration-300">
+                                    <div class="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center text-emerald-600 text-3xl mb-6 group-hover:bg-emerald-600 group-hover:text-white transition"><i class="fa-solid fa-hand-holding-heart"></i></div>
+                                    <h3 class="text-2xl font-bold text-slate-800 mb-3">مجتمع متكافل</h3>
+                                    <p class="text-slate-600">نبني شبكة ضخمة من المتطوعين لنكون عوناً للجميع.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                `,
+
+                register: () => `
+                    <section class="min-h-screen py-16 bg-slate-50 flex items-center justify-center">
+                        <div class="container mx-auto px-4 max-w-4xl animate__animated animate__fadeInUp">
+                            <div class="bg-white rounded-3xl shadow-card overflow-hidden flex flex-col md:flex-row">
+                                <div class="hidden md:block w-1/3 bg-slate-900 relative">
+                                    <img src="https://images.unsplash.com/photo-1579154204601-01588f351e67?q=80&w=1000" class="absolute inset-0 w-full h-full object-cover opacity-50">
+                                    <div class="absolute inset-0 bg-gradient-to-b from-red-600/80 to-slate-900/90"></div>
+                                    <div class="relative z-10 p-8 h-full flex flex-col justify-end text-white">
+                                        <h3 class="text-2xl font-bold mb-2">كل تبرع قصة</h3>
+                                        <p class="text-slate-200 text-sm">أنت تعطي أملاً جديداً لعائلة كاملة.</p>
+                                    </div>
+                                </div>
+                                <div class="w-full md:w-2/3 p-8 md:p-12">
+                                    <h2 class="text-3xl font-bold text-slate-800 mb-8">تسجيل متبرع جديد</h2>
+                                    <form id="donorForm" onsubmit="handleRegister(event)" class="space-y-6">
+                                        <div class="grid md:grid-cols-2 gap-5">
+                                            <div>
+                                                <label class="block text-sm font-bold text-slate-700 mb-2">الاسم بالكامل <span class="text-red-500">*</span></label>
+                                                <input type="text" required class="form-input w-full px-4 py-3 rounded-xl bg-slate-50 outline-none" placeholder="الاسم رباعي">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-bold text-slate-700 mb-2">اسم المستخدم (EN) <span class="text-red-500">*</span></label>
+                                                <input type="text" required class="form-input w-full px-4 py-3 rounded-xl bg-slate-50 outline-none text-left" style="direction:ltr">
+                                            </div>
+                                        </div>
+                                        <div class="grid md:grid-cols-2 gap-5">
+                                            <div>
+                                                <label class="block text-sm font-bold text-slate-700 mb-2">كلمة المرور <span class="text-red-500">*</span></label>
+                                                <input type="password" required class="form-input w-full px-4 py-3 rounded-xl bg-slate-50 outline-none text-left" style="direction:ltr">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-bold text-slate-700 mb-2">الفصيلة <span class="text-red-500">*</span></label>
+                                                <select id="regBloodType" required class="form-input w-full px-4 py-3 rounded-xl bg-slate-50 outline-none">
+                                                    <option value="">اختر</option>
+                                                    ${bloodTypes.map(t => `<option value="${t}">${t}</option>`).join('')}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="grid md:grid-cols-2 gap-5">
+                                            <div>
+                                                <label class="block text-sm font-bold text-slate-700 mb-2">المدينة <span class="text-red-500">*</span></label>
+                                                <select id="regCity" required class="form-input w-full px-4 py-3 rounded-xl bg-slate-50 outline-none">
+                                                    <option value="">اختر مدينتك</option>
+                                                    ${cities.map(c => `<option value="${c}">${c}</option>`).join('')}
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-bold text-slate-700 mb-2">رقم الهاتف <span class="text-red-500">*</span></label>
+                                                <input type="tel" required class="form-input w-full px-4 py-3 rounded-xl bg-slate-50 outline-none text-left font-mono" placeholder="01xxxxxxxxx" style="direction:ltr">
+                                            </div>
+                                        </div>
+                                        <div class="pt-4">
+                                            <button type="submit" class="w-full bg-slate-900 hover:bg-red-600 text-white font-bold py-4 rounded-xl shadow-lg transition transform hover:-translate-y-1 flex justify-center items-center gap-2">
+                                                <span>إتمام التسجيل</span> <i class="fa-solid fa-check-circle"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                `,
+
+                search: () => `
+                    <section class="min-h-screen py-16 bg-slate-50">
+                        <div class="container mx-auto px-4">
+                            <div class="text-center mb-12 animate__animated animate__fadeInDown">
+                                <h2 class="text-4xl font-bold text-slate-900 mb-4">البحث عن الأبطال</h2>
+                                <p class="text-slate-500 text-lg">ابحث في قاعدة بيانات المتبرعين المتاحة حالياً</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-3xl shadow-card max-w-5xl mx-auto mb-12 animate__animated animate__fadeInUp border border-slate-100">
+                                <div class="grid md:grid-cols-3 gap-6 items-end">
+                                    <div>
+                                        <label class="block text-sm font-bold text-slate-700 mb-2">فصيلة الدم</label>
+                                        <select id="searchBloodType" class="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-red-500 outline-none transition">
+                                            <option value="all">جميع الفصائل</option>
+                                            ${bloodTypes.map(t => `<option value="${t}">${t}</option>`).join('')}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-slate-700 mb-2">المدينة</label>
+                                        <select id="searchCity" class="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-red-500 outline-none transition">
+                                            <option value="all">جميع المدن</option>
+                                            ${cities.map(c => `<option value="${c}">${c}</option>`).join('')}
+                                        </select>
+                                    </div>
+                                    <button onclick="handleSearch()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2 h-[52px]">
+                                        <i class="fa-solid fa-magnifying-glass"></i> بحث
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="searchResults" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                                <!-- النتائج ستظهر هنا -->
+                            </div>
+                        </div>
+                    </section>
+                `,
+
+                volunteer: () => `
+                    <section class="min-h-screen flex items-center justify-center bg-slate-50 py-10">
+                        <div class="container mx-auto px-4">
+                             <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-card overflow-hidden flex flex-col md:flex-row animate__animated animate__zoomIn">
+                                <div class="md:w-1/2 p-10 flex flex-col justify-center">
+                                    <h2 class="text-3xl font-bold text-slate-900 mb-4">انضم لفريق الأبطال</h2>
+                                    <p class="text-slate-500 mb-8">التطوع بجهدك لا يقل أهمية عن التبرع بدمك. ساعدنا في التنظيم والنشر.</p>
+                                    <form onsubmit="handleVolunteer(event)" class="space-y-4">
+                                        <input type="text" placeholder="الاسم بالكامل" required class="form-input w-full px-4 py-3 rounded-xl bg-slate-50 outline-none">
+                                        <input type="email" placeholder="البريد الإلكتروني" required class="form-input w-full px-4 py-3 rounded-xl bg-slate-50 outline-none">
+                                        <textarea rows="3" placeholder="كيف يمكنك مساعدتنا؟" class="form-input w-full px-4 py-3 rounded-xl bg-slate-50 outline-none"></textarea>
+                                        <button class="w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-slate-800 transition">إرسال الطلب</button>
+                                    </form>
+                                </div>
+                                <div class="md:w-1/2 bg-red-600 p-10 text-white flex flex-col justify-center items-center text-center relative">
+                                    <i class="fa-solid fa-hand-holding-heart text-6xl mb-6 animate-float"></i>
+                                    <h3 class="text-2xl font-bold mb-2">مجالات التطوع</h3>
+                                    <ul class="text-red-100 space-y-2 text-sm">
+                                        <li>تنظيم حملات التبرع الميدانية</li>
+                                        <li>إدارة صفحات التواصل الاجتماعي</li>
+                                        <li>الدعم التقني وتطوير الموقع</li>
+                                    </ul>
+                                </div>
+                             </div>
+                        </div>
+                    </section>
+                `,
+
+                login: () => `
+                    <section class="min-h-screen flex items-center justify-center bg-slate-50 py-10">
+                         <div class="w-full max-w-md bg-white p-8 rounded-3xl shadow-card text-center animate__animated animate__fadeInUp">
+                            <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 text-red-600 text-3xl">
+                                <i class="fa-solid fa-user-lock"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold text-slate-900 mb-6">تسجيل الدخول</h2>
+                            <form onsubmit="event.preventDefault(); showToast('تم الدخول بنجاح'); safeNavigate('home');" class="space-y-4">
+                                <input type="text" placeholder="username" required class="form-input w-full px-4 py-3 rounded-xl bg-slate-50 outline-none text-left dir-ltr">
+                                <input type="password" placeholder="password" required class="form-input w-full px-4 py-3 rounded-xl bg-slate-50 outline-none text-left dir-ltr">
+                                <button class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition shadow-lg">دخول</button>
+                            </form>
+                            <p class="mt-6 text-slate-500 text-sm">ليس لديك حساب؟ <a onclick="safeNavigate('register')" class="text-red-600 font-bold hover:underline cursor-pointer">سجل الآن</a></p>
+                         </div>
+                    </section>
+                `,
+
+                about: () => `
+                    <section class="py-20 bg-white text-center min-h-screen flex flex-col justify-center">
+                        <div class="container mx-auto px-4 max-w-4xl animate__animated animate__fadeIn">
+                            <div class="inline-block bg-red-50 text-red-600 px-4 py-1 rounded-full font-bold text-sm mb-6">قصتنا</div>
+                            <h2 class="text-5xl font-black text-slate-900 mb-8">نحن نبني جسراً <br>من <span class="text-red-600">الأمل</span></h2>
+                            <p class="text-xl text-slate-600 leading-loose mb-12">
+                                تأسس بنك الدم المصري بهدف واحد: ضمان ألا يفقد مريض حياته بسبب نقص في أكياس الدم. نحن منصة غير هادفة للربح تعمل بجهود المتطوعين وإيمان المتبرعين.
+                            </p>
+                            <div class="grid md:grid-cols-3 gap-8 text-left">
+                                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                                    <!-- تم تعديل الرقم هنا إلى 0 -->
+                                    <h3 class="text-4xl font-black text-slate-900 mb-2">0</h3>
+                                    <p class="text-slate-500 font-bold">متبرع مسجل</p>
+                                </div>
+                                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                                    <!-- تم تعديل الرقم هنا إلى 0 -->
+                                    <h3 class="text-4xl font-black text-slate-900 mb-2">0</h3>
+                                    <p class="text-slate-500 font-bold">حملة ناجحة</p>
+                                </div>
+                                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                                    <h3 class="text-4xl font-black text-slate-900 mb-2">24/7</h3>
+                                    <p class="text-slate-500 font-bold">دعم مستمر</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                `
+            };
+
+            // --- 4. دوال التحكم (Controllers) ---
+            
+            window.safeNavigate = (route) => {
+                const appRoot = document.getElementById('app-root');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                if (views[route]) {
+                    appRoot.innerHTML = views[route]();
+                } else {
+                    appRoot.innerHTML = views['home']();
+                }
+
+                if (route === 'search') {
+                    // تشغيل البحث الافتراضي لعرض قائمة المتبرعين التجريبية
+                    setTimeout(handleSearch, 100);
+                }
+            };
+
+            window.handleRegister = (e) => {
+                e.preventDefault();
+                const form = e.target;
+                const name = form.querySelector('input[placeholder="الاسم رباعي"]').value;
+                const blood = document.getElementById('regBloodType').value;
+                const city = document.getElementById('regCity').value;
+                const phone = form.querySelector('input[type="tel"]').value;
+
+                if(!blood || !city) {
+                    showToast('يرجى اختيار الفصيلة والمدينة', 'error');
+                    return;
+                }
+
+                db.donors.unshift({
+                    id: Date.now(),
+                    name: name,
+                    blood: blood,
+                    city: city,
+                    phone: phone,
+                    lastDonation: new Date().toISOString().split('T')[0],
+                    verified: true 
+                });
+
+                showToast(`أهلاً بك يا بطل! تم تسجيل ${name} بنجاح`);
+                setTimeout(() => safeNavigate('search'), 1500);
+            };
+
+            window.handleVolunteer = (e) => {
+                e.preventDefault();
+                showToast('شكراً لمبادرتك! سنتواصل معك قريباً');
+                e.target.reset();
+            };
+
+            window.handleSearch = () => {
+                const typeFilter = document.getElementById('searchBloodType').value;
+                const cityFilter = document.getElementById('searchCity').value;
+                const container = document.getElementById('searchResults');
+
+                if (!container) return;
+
+                const results = db.donors.filter(d => {
+                    return (typeFilter === 'all' || d.blood === typeFilter) && 
+                           (cityFilter === 'all' || d.city === cityFilter);
+                });
+
+                if (results.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-16 bg-white rounded-3xl border border-dashed border-slate-300">
+                            <div class="inline-block p-4 bg-slate-50 rounded-full mb-4"><i class="fa-solid fa-user-slash text-4xl text-slate-400"></i></div>
+                            <h3 class="text-xl font-bold text-slate-600">لا يوجد نتائج</h3>
+                            <p class="text-slate-400 mt-2">حاول تغيير معايير البحث</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = results.map(d => `
+                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-card transition-all duration-300 group relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-2 h-full ${d.verified ? 'bg-emerald-500' : 'bg-slate-300'}"></div>
+                        <div class="flex justify-between items-start mb-4 pl-2">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <h3 class="font-bold text-lg text-slate-900">${d.name}</h3>
+                                    ${d.verified ? '<i class="fa-solid fa-circle-check text-emerald-500 text-xs" title="موثق"></i>' : ''}
+                                </div>
+                                <div class="flex items-center gap-2 text-sm text-slate-500">
+                                    <i class="fa-solid fa-location-dot text-red-500"></i>
+                                    <span>${d.city}</span>
+                                </div>
+                            </div>
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-red-500 to-red-700 text-white flex items-center justify-center font-black text-xl shadow-lg transform group-hover:rotate-6 transition duration-300">
+                                ${d.blood}
+                            </div>
+                        </div>
+                        <div class="border-t border-slate-100 pt-4 mt-2">
+                            <div class="flex justify-between items-center text-xs text-slate-400 mb-4">
+                                <span>آخر تبرع: ${d.lastDonation}</span>
+                            </div>
+                            <div class="flex gap-3">
+                                <!-- تم تعديل لون الزر هنا ليصبح أحمر -->
+                                <a href="tel:${d.phone}" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 shadow-lg">
+                                    <i class="fa-solid fa-phone"></i> اتصل
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            };
+
+            // تأثير الظل على القائمة عند التمرير (الآن أصبح يظهر أسرع)
+            window.addEventListener('scroll', () => {
+                const nav = document.getElementById('navbar');
+                // يظهر الظل بمجرد التمرير 10 بكسل بدلاً من 50
+                if (window.scrollY > 10) { 
+                    nav.classList.add('shadow-md');
+                } else {
+                    nav.classList.remove('shadow-md');
+                }
+            });
+
+            // تشغيل التطبيق
+            safeNavigate('home');
+
+        } catch (error) {
+            document.body.innerHTML = `<div class="flex items-center justify-center h-screen text-red-600 font-bold">حدث خطأ: ${error.message}</div>`;
+        }
+    </script>
+</body>
+</html>
